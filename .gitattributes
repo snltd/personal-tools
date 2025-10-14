@@ -1,0 +1,2 @@
+# Ignore test HTML fixtures in language stats
+assay/tests/resources/*.html linguist-detectable=false
