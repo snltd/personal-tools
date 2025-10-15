@@ -21,7 +21,10 @@ fn assay_record(conn: &mut PooledConn, record: RecordToAssay, conf: &Config) -> 
         if let Some(id) = helpers::release_id(discogs_uri) {
             let api_uri = format!("https://api.discogs.com/marketplace/price_suggestions/{id}");
             db::update_api_price(conn, record.id, api::marketplace_suggestion(api_uri, conf)?)?;
-            db::update_www_price(conn, record.id, www::cheapest_available(&id)?)?;
+
+            let (cheapest_price, field) = www::cheapest_available(&id)?;
+
+            db::update_www_price(conn, record.id, field.as_deref(), cheapest_price)?;
         } else {
             tracing::error!("Could not get ID");
         }

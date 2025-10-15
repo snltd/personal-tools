@@ -2,13 +2,14 @@ use crate::util::helpers;
 use anyhow::bail;
 use scraper::{Html, Selector};
 
-pub fn cheapest_available(id: &str) -> anyhow::Result<Option<f64>> {
+pub fn cheapest_available(id: &str) -> anyhow::Result<(Option<f64>, Option<String>)> {
     let uk_url = uk_marketplace_url(id);
     tracing::info!("fetching UK prices from {uk_url}");
     let uk_raw = raw_page(&uk_url)?;
 
     if let Some(uk_price) = extract_price_uk(&uk_raw)? {
-        return Ok(Some(uk_price));
+        tracing::debug!("found UK price of {uk_price}");
+        return Ok((Some(uk_price), Some("uk".to_owned())));
     }
 
     tracing::info!("{id} has no UK price");
@@ -17,10 +18,11 @@ pub fn cheapest_available(id: &str) -> anyhow::Result<Option<f64>> {
     let world_raw = raw_page(&world_url)?;
 
     if let Some(world_price) = extract_price_world(&world_raw)? {
-        return Ok(Some(world_price));
+        tracing::info!("found world price of {world_price}");
+        return Ok((Some(world_price), Some("world".to_owned())));
     }
 
-    Ok(None)
+    Ok((None, None))
 }
 
 fn raw_page(url: &str) -> anyhow::Result<String> {
@@ -65,7 +67,7 @@ fn extract_price_uk(html: &str) -> anyhow::Result<Option<f64>> {
 fn extract_price_world(html: &str) -> anyhow::Result<Option<f64>> {
     extract_price(
         html,
-        "tr.shortcut_navigable:nth-child(1) > td:nth-child(5) > span:nth-child(3)",
+        "#pjax_container > table > tbody > tr:nth-child(1) > td.item_price.hide_mobile > span.converted_price",
     )
 }
 

@@ -15,7 +15,7 @@ pub fn update_api_price(
     if let Some(suggested_price) = price {
         tracing::info!("updating {id} with suggested price {:.2}", suggested_price);
         conn.exec_drop(
-            "UPDATE rec SET vgplus_value = ?, discogs_updated = NOW() WHERE id = ?",
+            "UPDATE rec SET discogs_vgplus_value = ?, discogs_updated = NOW() WHERE id = ?",
             (suggested_price, id),
         )?;
     } else {
@@ -29,12 +29,24 @@ pub fn update_api_price(
 pub fn update_www_price(
     conn: &mut PooledConn,
     id: u32,
+    field: Option<&str>,
     price: Option<Price>,
 ) -> anyhow::Result<()> {
-    if let Some(cheapest_price) = price {
-        tracing::info!("updating {id} with cheapest price {:.2}", cheapest_price);
+    if let Some(cheapest_price) = price
+        && let Some(field) = field
+    {
+        let field = format!("discogs_cheapest_{field}");
+
+        tracing::info!(
+            "updating {id} {field} with cheapest price {:.2}",
+            cheapest_price
+        );
+
         conn.exec_drop(
-            "UPDATE rec SET discogs_asking_fpm = ?, discogs_updated = NOW() WHERE id = ?",
+            format!(
+                "UPDATE rec SET {} = ?, discogs_updated = NOW() WHERE id = ?",
+                field
+            ),
             (cheapest_price, id),
         )?;
     } else {
