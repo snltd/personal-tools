@@ -6,7 +6,6 @@ use clap::Parser;
 use std::fs;
 use tracing_subscriber::EnvFilter;
 
-mod test_utils;
 mod util;
 
 #[derive(Parser, Debug)]
