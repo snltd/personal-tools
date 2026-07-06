@@ -74,13 +74,13 @@ fn extract_price_world(html: &str) -> anyhow::Result<Option<f64>> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::test_utils::spec_helper::load_fixture;
+    use snltest::load_fixture;
 
     #[test]
     fn test_extract_price_world() {
         assert_eq!(
             17.44,
-            extract_price_world(&load_fixture("31853303-world.html"))
+            extract_price_world(&load_fixture!("31853303-world.html"))
                 .unwrap()
                 .unwrap(),
         );
@@ -90,7 +90,7 @@ mod test {
     fn test_extract_price_uk() {
         assert_eq!(
             21.00,
-            extract_price_uk(&load_fixture("31853303-uk.html"))
+            extract_price_uk(&load_fixture!("31853303-uk.html"))
                 .unwrap()
                 .unwrap(),
         );
