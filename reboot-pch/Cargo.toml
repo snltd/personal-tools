@@ -1,7 +1,0 @@
-[package]
-name = "reboot-pch"
-version = "2.0.0"
-edition = "2024"
-
-[dependencies]
-telnet = "0.2.4"
