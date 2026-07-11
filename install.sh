@@ -1,6 +1,5 @@
 for tool in \
-  assay \
-  reboot-pch
+  assay 
 do
   cargo install --path $tool
 done
