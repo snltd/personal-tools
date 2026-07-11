@@ -1,6 +1,5 @@
 [workspace]
 members = [
   "assay",
-  "reboot-pch",
 ]
 resolver = "2"
